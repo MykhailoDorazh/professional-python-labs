@@ -66,13 +66,13 @@ def main(argv: list[str] | None = None) -> None:
             "2000 UA00000002 -> UA00000004",
             lambda: bank.transfer_money("UA00000002", "UA00000004", "2000"),
         )
-        engine.echo = False
         print("\n== 4. transfer_money(): ROLLBACK ==")
         before = bank.get_balance("UA00000001")
         attempt(
             "1000 UA00000001 -> UA99999999",
             lambda: bank.transfer_money("UA00000001", "UA99999999", "1000"),
         )
+        engine.echo = False
         attempt(
             "99999 UA00000001 -> UA00000003",
             lambda: bank.transfer_money("UA00000001", "UA00000003", "99999"),
