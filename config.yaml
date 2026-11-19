@@ -1,0 +1,20 @@
+schema_version: 1
+
+input:
+  path: data/employees.csv
+
+output:
+  path: output/employees.json
+  errors_path: output/errors.csv
+  summary_path: output/summary.json
+
+processing:
+  skip_invalid: true          # true - tolerant mode, false - strict mode
+  allowed_departments: [IT, Фінанси, HR, Продажі, Логістика]
+  min_salary: 20000           # фільтр: працівники з меншою зарплатою не експортуються
+  max_salary: 1000000         # верхня межа валідної зарплати
+  currency: UAH
+
+logging:
+  level: INFO
+  path: logs/application.log
