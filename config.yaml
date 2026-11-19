@@ -1,0 +1,19 @@
+schema_version: 1
+
+input:
+  path: data/operations.csv
+
+output:
+  path: output/operations.json
+  errors_path: output/errors.csv
+  summary_path: output/summary.json
+
+processing:
+  skip_invalid: true          # true - tolerant mode, false - strict mode
+  allowed_operations: [deposit, withdraw]
+  currency: UAH
+  max_amount: 100000
+
+logging:
+  level: INFO
+  path: logs/application.log
