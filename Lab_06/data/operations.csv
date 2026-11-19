@@ -1,8 +1,0 @@
-account_number,operation,amount
-UA100002,deposit,1800
-UA100003,withdraw,750.50
-UA100002,withdraw,9000
-UA100001,withdraw,1000
-UA100009,deposit,10
-UA100001,transfer,5
-UA100003,deposit,abc

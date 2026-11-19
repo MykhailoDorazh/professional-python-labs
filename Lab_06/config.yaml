@@ -1,4 +1,0 @@
-allowed_operations: [deposit, withdraw]
-currency: UAH
-max_amount: 100000
-skip_invalid: true
