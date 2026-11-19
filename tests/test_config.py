@@ -76,10 +76,12 @@ def test_secret_is_not_shown(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def make_client(tmp_path: Path, **overrides: object) -> TestClient:
-    settings = Settings(
-        database_url=f"sqlite:///{tmp_path / 'cfg.db'}", app_env="test", **overrides
-    )  # type: ignore[arg-type]
-    return TestClient(create_app(settings))
+    values: dict[str, object] = {
+        "database_url": f"sqlite:///{tmp_path / 'cfg.db'}",
+        "app_env": "test",
+        **overrides,
+    }
+    return TestClient(create_app(Settings(**values)))  # type: ignore[arg-type]
 
 
 def test_health_reports_environment_and_database(tmp_path: Path) -> None:
