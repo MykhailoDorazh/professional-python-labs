@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "employee-stream"
+version = "0.3.0"
+description = "Streaming processing of employee data - laboratory work 3 for Professional Python"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Дораж Михайло" }]
+
+[project.scripts]
+employee-stream = "employee_stream.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
