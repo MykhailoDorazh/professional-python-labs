@@ -1,0 +1,4 @@
+number,type,owner_id,owner_name,owner_email,balance
+UA100001,savings,1,Іван Петренко,ivan@example.com,50000
+UA100002,current,1,Іван Петренко,ivan@example.com,3200
+UA100003,current,2,Олена Коваль,olena@example.com,12750.50
