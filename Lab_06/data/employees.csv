@@ -1,0 +1,9 @@
+employee_id,name,position,department,salary,role
+E0001,Олена Коваль,Керівник розробки,IT,95000,manager
+E0002,Іван Петренко,Python-розробник,IT,72000,developer
+E0003,Андрій Мельник,Бухгалтер,FIN,36800,employee
+E0004,Марія Бондар,HR-менеджер,HR,48000,manager
+E0005,Тарас Новак,Логіст,LOG,30000,employee
+E0006,Софія Лисенко,Стажер,HR,5000,employee
+E0007,Петро Ткачук,Аналітик,FIN,abc,employee
+E0002,Дублікат Петренко,Тестувальник,IT,40000,employee
