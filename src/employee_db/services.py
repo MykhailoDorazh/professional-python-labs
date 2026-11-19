@@ -134,13 +134,14 @@ class HRService:
             # від меншої зарплати до більшої: збій на останньому показує відкат попередніх
             employees = sorted(self.employees_in(department_code), key=lambda e: e.salary_cents)
             for employee in employees:
+                # номер читаємо до flush: після невдалого flush об'єкти сесії недоступні
+                number = employee.personnel_number
                 employee.salary_cents = int(
                     (employee.salary_cents * factor).quantize(Decimal("1"), ROUND_HALF_UP))
                 try:
                     self.session.flush()  # UPDATE; the database checks the salary range
                 except IntegrityError as error:
-                    raise InvalidSalaryError(
-                        f"Нова зарплата {employee.personnel_number} перевищує максимум") from error
+                    raise InvalidSalaryError(f"Нова зарплата {number} перевищує максимум") from error
             return len(employees)
 
     # ---------- reports ----------
