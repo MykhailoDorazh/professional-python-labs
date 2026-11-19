@@ -57,6 +57,8 @@ def test_create_and_read(seeded: HRService) -> None:
         ("E0009", "Олег", "Аналітик", "1", "SALES", DepartmentNotFoundError),
         ("E0001", "Олег", "Аналітик", "1", "IT", DuplicateEmployeeError),
     ],
+    ids=["bad-number", "empty-name", "empty-position", "negative-salary", "above-max",
+         "unknown-department", "duplicate"],
 )
 def test_hire_validation(seeded: HRService, number: str, name: str, position: str,
                          salary: str, department: str, error: type[Exception]) -> None:
