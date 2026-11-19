@@ -4,17 +4,17 @@ on:
   push:
     branches: [main]
     tags: ["v*"]
-    paths: ["Lab10/**", ".github/workflows/lab10-ci.yml"]
+    paths: ["Lab_10/**", ".github/workflows/lab10-ci.yml"]
   pull_request:
-    paths: ["Lab10/**", ".github/workflows/lab10-ci.yml"]
+    paths: ["Lab_10/**", ".github/workflows/lab10-ci.yml"]
 
 permissions:
   contents: read
 
-# the project lives in the Lab10/ folder of this repository
+# the project lives in the Lab_10/ folder of this repository
 defaults:
   run:
-    working-directory: Lab10
+    working-directory: Lab_10
 
 jobs:
   quality:
@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-          cache-dependency-path: Lab10/pyproject.toml
+          cache-dependency-path: Lab_10/pyproject.toml
 
       - name: Install dependencies
         run: |
@@ -76,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: Lab10/dist/
+          path: Lab_10/dist/
 
   docker:
     name: docker build and smoke test
