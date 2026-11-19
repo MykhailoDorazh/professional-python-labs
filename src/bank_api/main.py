@@ -22,7 +22,13 @@ def main(argv: list[str] | None = None) -> None:
         from bank_api.seed import seed
 
         seed(os.environ.get("BANK_DATABASE_URL", "sqlite:///bank.db"))
-    uvicorn.run("bank_api.api:app", host=args.host, port=args.port, reload=args.reload)
+    uvicorn.run(
+        "bank_api.api:app",
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+        use_colors=False if os.getenv("NO_COLOR") else None,  # https://no-color.org
+    )
 
 
 if __name__ == "__main__":
