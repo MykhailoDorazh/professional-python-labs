@@ -1,0 +1,20 @@
+# docker compose up --build  ->  http://localhost:8000/docs
+services:
+  api:
+    build: .
+    image: bank-account-service:1.0.0
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: production
+      LOG_LEVEL: INFO
+      DATABASE_URL: sqlite:////app/data/bank.db
+    env_file:
+      - path: .env          # API_KEY and other local secrets, optional
+        required: false
+    volumes:
+      - bank_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  bank_data:
