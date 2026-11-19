@@ -1,0 +1,8 @@
+departments:
+  IT: Інформаційні технології
+  FIN: Фінанси
+  HR: Персонал
+min_salary: 8000
+max_salary: 1000000
+currency: UAH
+skip_invalid: true
