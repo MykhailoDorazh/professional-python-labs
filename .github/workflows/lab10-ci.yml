@@ -1,0 +1,90 @@
+name: Lab10 CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths: ["Lab10/**", ".github/workflows/lab10-ci.yml"]
+  pull_request:
+    paths: ["Lab10/**", ".github/workflows/lab10-ci.yml"]
+
+permissions:
+  contents: read
+
+# the project lives in the Lab10/ folder of this repository
+defaults:
+  run:
+    working-directory: Lab10
+
+jobs:
+  quality:
+    name: lint, types, tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: Lab10/pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: Type check
+        run: mypy src
+
+      - name: Tests with coverage
+        run: pytest -v --cov --cov-report=term-missing --cov-fail-under=85
+
+  build:
+    name: build wheel and sdist
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build package
+        run: |
+          python -m pip install build
+          python -m build
+      - name: Check dist
+        run: ls -la dist
+      - name: Install wheel in a clean environment
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          /tmp/clean/bin/bank-account-service version
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: Lab10/dist/
+
+  docker:
+    name: docker build and smoke test
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker build
+        run: docker build -t bank-account-service:ci .
+      - name: Run container and check /health
+        run: bash scripts/smoke.sh bank-account-service:ci
