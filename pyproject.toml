@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "employee-analytics"
+version = "0.2.0"
+description = "Employee data analysis - laboratory work 2 for Professional Python"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Дораж Михайло" }]
+
+[project.scripts]
+employee-analytics = "employee_analytics.main:main"
+employee-benchmark = "employee_analytics.benchmark:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
