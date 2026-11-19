@@ -28,15 +28,10 @@ STEPS: list[tuple[str, list[str]]] = [
 
 
 def docker_steps(docker: list[str]) -> list[tuple[str, list[str]]]:
-    script = (
-        "set -e; docker rm -f api-ci >/dev/null 2>&1 || true; "
-        "docker run -d --name api-ci -p 8001:8000 bank-account-service:ci >/dev/null; "
-        "for i in $(seq 1 30); do curl -fsS localhost:8001/health && break; sleep 1; done; "
-        "echo; docker rm -f api-ci >/dev/null"
-    )
+    shell = [*docker[:-1], "bash", "scripts/smoke.sh", "bank-account-service:ci"]
     return [
         ("Docker build", [*docker, "build", "-q", "-t", "bank-account-service:ci", "."]),
-        ("Docker smoke test /health", [*docker[:-1], "bash", "-c", script]),
+        ("Docker smoke test /health", shell),
     ]
 
 
