@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "employee-io"
+version = "0.5.0"
+description = "Reliable import/export of employee data - laboratory work 5 for Professional Python"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Дораж Михайло" }]
+dependencies = [
+    "pyyaml>=6",
+]
+
+[project.scripts]
+employee-io = "employee_io.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
