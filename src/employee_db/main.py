@@ -32,7 +32,7 @@ def attempt(title: str, action: Callable[[], object]) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Employee persistence layer demo")
     parser.add_argument("--db", default="demo.db", help="SQLite file for the demo")
-    parser.add_argument("--echo", action="store_true", help="print SQL of the mass raise")
+    parser.add_argument("--echo", action="store_true", help="print SQL of the rolled back mass raise")
     args = parser.parse_args(argv)
 
     db_path = Path(args.db)
@@ -73,11 +73,12 @@ def main(argv: list[str] | None = None) -> None:
         print(f"  E0001 після ROLLBACK залишився у відділі: {hr.get_employee('E0001').department.code}")
 
         print("\n== 4. Масова зміна зарплат: COMMIT і ROLLBACK ==")
-        engine.echo = args.echo
         attempt("IT +10 %", lambda: hr.raise_salaries("IT", "10"))
-        engine.echo = False
         before = hr.payroll("IT")
+        session.commit()  # завершити транзакцію читання, щоб --echo охопив наступну
+        engine.echo = args.echo
         attempt("IT +1000 % (E0001 > 1 000 000)", lambda: hr.raise_salaries("IT", "1000"))
+        engine.echo = False
         print(f"  Фонд IT до: {before}, після ROLLBACK: {hr.payroll('IT')}")
         print_employees(hr)
 
