@@ -1,6 +1,7 @@
 """Alembic migrations on a separate test database: upgrade, downgrade, no drift."""
 
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 import pytest
@@ -20,7 +21,8 @@ def alembic_cfg(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Config:
 
 
 def columns(db: Path, table: str) -> list[str]:
-    with sqlite3.connect(db) as connection:
+    # sqlite3 connection as a context manager only commits; closing() really closes it
+    with closing(sqlite3.connect(db)) as connection:
         return [row[1] for row in connection.execute(f"PRAGMA table_info({table})")]
 
 
@@ -42,12 +44,12 @@ def test_downgrade_removes_account_type(alembic_cfg: Config, tmp_path: Path) -> 
 def test_existing_rows_get_default_type(alembic_cfg: Config, tmp_path: Path) -> None:
     command.upgrade(alembic_cfg, "0001")
     db = tmp_path / "migrated.db"
-    with sqlite3.connect(db) as connection:
+    with closing(sqlite3.connect(db)) as connection, connection:
         connection.execute("INSERT INTO clients (full_name) VALUES ('Анна')")
         connection.execute("INSERT INTO accounts (number, balance_cents, client_id) "
                            "VALUES ('UA1', 100, 1)")
     command.upgrade(alembic_cfg, "head")
-    with sqlite3.connect(db) as connection:
+    with closing(sqlite3.connect(db)) as connection:
         assert connection.execute("SELECT account_type FROM accounts").fetchone() == ("current",)
 
 
