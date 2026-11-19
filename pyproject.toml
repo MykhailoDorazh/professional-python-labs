@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "employee-domain"
+version = "0.4.0"
+description = "Typed object model of the employee management system - laboratory work 4 for Professional Python"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Дораж Михайло" }]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.10",
+]
+
+[project.scripts]
+employee-domain = "employee_domain.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.mypy]
+python_version = "3.13"
+mypy_path = "src"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+
+[tool.setuptools.package-data]
+employee_domain = ["py.typed"]
