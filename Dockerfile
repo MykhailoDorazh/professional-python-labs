@@ -3,7 +3,7 @@
 # ---------- stage 1: build the wheel ----------
 FROM python:3.13-slim AS builder
 WORKDIR /build
-RUN python -m pip install --no-cache-dir build==1.3.0
+RUN python -m pip install --no-cache-dir --root-user-action=ignore build==1.3.0
 COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 RUN python -m build --wheel --outdir /dist
@@ -19,6 +19,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     APP_ENV=production \
     HOST=0.0.0.0 \
     PORT=8000 \
