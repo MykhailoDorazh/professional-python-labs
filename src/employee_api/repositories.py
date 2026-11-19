@@ -144,6 +144,20 @@ class EmployeeRepository(SqlAlchemyRepository[Employee]):
             statement = statement.where(Employee.department_id == department_id)
         return self.session.scalar(statement)
 
+    def salary_stats(self, department_id: int) -> tuple[int, int, float, int, int]:
+        """COUNT / SUM / AVG / MIN / MAX of salaries of one department in one query."""
+        row = self.session.execute(
+            select(
+                func.count(Employee.id),
+                func.coalesce(func.sum(Employee.salary_cents), 0),
+                func.coalesce(func.avg(Employee.salary_cents), 0),
+                func.coalesce(func.min(Employee.salary_cents), 0),
+                func.coalesce(func.max(Employee.salary_cents), 0),
+            ).where(Employee.department_id == department_id)
+        ).one()
+        count, total, average, low, high = row
+        return int(count), int(total), float(average), int(low), int(high)
+
     def stats_by_department(self) -> Sequence[tuple[str, str, int, int, float, int]]:
         """JOIN departments-employees + GROUP BY: COUNT / SUM / AVG / MAX per department.
         LEFT JOIN keeps empty departments in the report."""

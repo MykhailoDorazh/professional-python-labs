@@ -159,6 +159,59 @@ class HRService:
         return [(code, name, count, from_cents(total), from_cents(round(avg)), from_cents(top))
                 for code, name, count, total, avg, top in self.employees.stats_by_department()]
 
+    # ---------- access by primary key (REST resources use ids) ----------
+    def get_department_by_id(self, department_id: int) -> Department:
+        department = self.departments.get_by_id(department_id)
+        if department is None:
+            raise DepartmentNotFoundError(f"Відділ id={department_id} не знайдено")
+        return department
+
+    def get_employee_by_id(self, employee_id: int) -> Employee:
+        employee = self.employees.get_by_id(employee_id)
+        if employee is None:
+            raise EmployeeNotFoundError(f"Працівника id={employee_id} не знайдено")
+        return employee
+
+    def list_departments(self) -> list[Department]:
+        return self.departments.get_all()
+
+    def update_employee(self, employee_id: int, *, full_name: str | None = None,
+                        position: str | None = None, salary: Decimal | str | int | None = None,
+                        department_id: int | None = None,
+                        hire_date: date | None = None) -> Employee:
+        """Partial update (PATCH): only the given fields change, all in one transaction."""
+        if full_name is not None and not full_name.strip():
+            raise HRError("ПІБ не може бути порожнім")
+        if position is not None and not position.strip():
+            raise HRError("Посада не може бути порожньою")
+        cents = None if salary is None else self._salary(salary)
+        with transaction(self.session):
+            employee = self.get_employee_by_id(employee_id)
+            if department_id is not None:
+                employee.department_id = self.get_department_by_id(department_id).id
+            if full_name is not None:
+                employee.full_name = " ".join(full_name.split())
+            if position is not None:
+                employee.position = position.strip()
+            if cents is not None:
+                employee.salary_cents = cents
+            if hire_date is not None:
+                employee.hire_date = hire_date
+            return employee
+
+    def department_statistics(self, department_id: int) -> dict[str, object]:
+        """Statistics of one department: headcount, payroll, average, min, max, top earner."""
+        department = self.get_department_by_id(department_id)
+        count, total, average, low, high = self.employees.salary_stats(department.id)
+        top = self.employees.highest_paid(department.id)
+        return {
+            "department_id": department.id, "code": department.code, "name": department.name,
+            "employees": count, "payroll": from_cents(total),
+            "average_salary": from_cents(round(average)), "min_salary": from_cents(low),
+            "max_salary": from_cents(high),
+            "highest_paid": top.personnel_number if top is not None else None,
+        }
+
     # ---------- internal ----------
     def _department_id(self, department_code: str | None) -> int | None:
         return None if department_code is None else self.get_department(department_code).id
