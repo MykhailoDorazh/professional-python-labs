@@ -1,0 +1,21 @@
+# virtual environments
+.venv/
+test_env/
+# python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+# tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+# local configuration and secrets
+.env
+# databases
+*.db
+data/
